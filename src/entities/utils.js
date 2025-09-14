@@ -1,4 +1,4 @@
-
+import { decodeHtml,  encodeHtml } from '../core/core.js';
 /**
  * Check if string contains HTML entities
  * @param {string} str - String to check
@@ -94,57 +94,6 @@ function listUniqueEntities(str) {
 }
 
 /**
- * Get detailed statistics about entities in string
- * @param {string} str - String to analyze
- * @returns {Object} Detailed statistics
- */
-function getEntityStats(str) {
-  if (typeof str !== 'string') {
-    return {
-      total: 0,
-      unique: 0,
-      named: 0,
-      numeric: 0,
-      decimal: 0,
-      hexadecimal: 0,
-      frequencies: {},
-      types: {}
-    };
-  }
-  
-  const entities = findEntities(str);
-  const frequencies = {};
-  const types = {
-    named: [],
-    decimal: [],
-    hexadecimal: []
-  };
-  
-  entities.forEach(entity => {
-    frequencies[entity] = (frequencies[entity] || 0) + 1;
-    
-    if (entity.startsWith('&#x') || entity.startsWith('&#X')) {
-      types.hexadecimal.push(entity);
-    } else if (entity.startsWith('&#')) {
-      types.decimal.push(entity);
-    } else {
-      types.named.push(entity);
-    }
-  });
-  
-  return {
-    total: entities.length,
-    unique: Object.keys(frequencies).length,
-    named: types.named.length,
-    numeric: types.decimal.length + types.hexadecimal.length,
-    decimal: types.decimal.length,
-    hexadecimal: types.hexadecimal.length,
-    frequencies,
-    types
-  };
-}
-
-/**
  * Search for specific entity types in string
  * @param {string} str - String to search
  * @param {Object} options - Search options
@@ -201,13 +150,35 @@ function searchEntities(str, options = {}) {
   return [...new Set(results)];
 }
 
-module.exports = {
+/**
+ * Returns detailed position information for each entity
+ * @param {string} html - HTML string to analyze
+ * @returns {Array} Array of {entity, start, end, length} objects
+ */
+function getEntityPositions(html) {
+  const regex = /&(?:#(?:x[0-9a-fA-F]+|[0-9]+)|[a-zA-Z][a-zA-Z0-9]*);?/g;
+  const positions = [];
+  let match;
+  
+  while ((match = regex.exec(html)) !== null) {
+    positions.push({
+      entity: match[0],
+      start: match.index,
+      end: match.index + match[0].length,
+      length: match[0].length
+    });
+  }
+  
+  return positions;
+}
+
+export {
   hasEntities,
+  searchEntities,   
   findEntities,
   validateEntities,
   normalizeEntities,
   countEntities,
   listUniqueEntities,
-  getEntityStats,
-  searchEntities
+  getEntityPositions,
 };

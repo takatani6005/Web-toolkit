@@ -1,5 +1,7 @@
-const decodeMap = require('../data/decode-map.json');
-const encodeMap = require('../data/encode-map-full.json');
+// src/core.js
+import decodeMap  from '../../data/decode-map.json' with { type: 'json' };;
+import encodeMap  from '../../data/encode-map-full.json' with { type: 'json' };;
+
 //const encodeMapLite = require('../data/encode-map-lite.json');
 
 /**
@@ -108,4 +110,7 @@ function encodeHtml(str, options = {}) {
     }
   });
 }
-module.exports = { decodeHtml, encodeHtml };
+export{
+  decodeHtml,
+  encodeHtml
+}

@@ -1,0 +1,299 @@
+{
+  "security-config.json": {
+    "whitelist": {
+      "tags": [
+        "p", "br", "strong", "em", "u", "i", "b", "span", "div",
+        "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li",
+        "a", "img", "table", "thead", "tbody", "tr", "td", "th",
+        "blockquote", "code", "pre", "small", "sub", "sup"
+      ],
+      "attributes": [
+        "class", "id", "title", "alt", "href", "src", "width", "height",
+        "target", "rel", "type", "role", "aria-label", "aria-describedby",
+        "data-*", "colspan", "rowspan", "scope"
+      ],
+      "protocols": [
+        "http:", "https:", "mailto:", "ftp:", "tel:", "sms:"
+      ],
+      "entities": [
+        "&amp;", "&lt;", "&gt;", "&quot;", "&#x27;", "&apos;",
+        "&nbsp;", "&copy;", "&reg;", "&trade;", "&hellip;",
+        "&mdash;", "&ndash;", "&lsquo;", "&rsquo;", "&ldquo;", "&rdquo;"
+      ]
+    },
+    "blacklist": {
+      "tags": [
+        "script", "iframe", "object", "embed", "form", "input", "textarea",
+        "select", "option", "button", "link", "meta", "style", "title",
+        "head", "html", "body", "frameset", "frame", "noframes",
+        "applet", "base", "basefont", "bgsound", "blink", "comment",
+        "isindex", "keygen", "listing", "marquee", "nextid", "nobr",
+        "plaintext", "spacer", "wbr", "xmp"
+      ],
+      "attributes": [
+        "onclick", "ondblclick", "onmousedown", "onmouseup", "onmouseover",
+        "onmousemove", "onmouseout", "onfocus", "onblur", "onkeypress",
+        "onkeydown", "onkeyup", "onsubmit", "onreset", "onselect",
+        "onchange", "onload", "onunload", "onerror", "onabort",
+        "oncanplay", "oncanplaythrough", "oncuechange", "ondurationchange",
+        "onemptied", "onended", "onloadeddata", "onloadedmetadata",
+        "onloadstart", "onpause", "onplay", "onplaying", "onprogress",
+        "onratechange", "onseeked", "onseeking", "onstalled", "onsuspend",
+        "ontimeupdate", "onvolumechange", "onwaiting",         "onafterprint", "onbeforeprint", "onbeforeunload", "onhashchange", 
+        "onmessage", "onoffline", "ononline", "onpagehide", "onpageshow",
+        "onpopstate", "onresize", "onstorage", "oncontextmenu", "oninput",
+        "oninvalid", "onsearch", "ondrag", "ondragend", "ondragenter",
+        "ondragleave", "ondragover", "ondragstart", "ondrop", "onscroll",
+        "oncopy", "oncut", "onpaste", "onwheel", "ontoggle", "onshow",
+        "style", "background", "background-image", "expression",
+        "javascript", "vbscript", "livescript", "mocha", "feed",
+        "xml-stylesheet", "binding", "import"
+      ],
+      "protocols": [
+        "javascript:", "data:", "vbscript:", "file:", "about:", "chrome:",
+        "chrome-extension:", "moz-extension:", "ms-browser-extension:",
+        "livescript:", "mocha:", "feed:", "view-source:", "resource:",
+        "chrome-search:", "chrome-devtools:", "jar:", "wyciwyg:"
+      ],
+      "entities": [
+        "&lt;script", "&lt;iframe", "&lt;object", "&lt;embed",
+        "&lt;form", "&lt;input", "&lt;link", "&lt;meta", "&lt;style"
+      ]
+    },
+    "strictMode": {
+      "tags": [
+        "p", "br", "strong", "em", "i", "b", "u", "span", "div"
+      ],
+      "attributes": [
+        "class", "id", "title"
+      ],
+      "protocols": [
+        "https:"
+      ],
+      "entities": [
+        "&amp;", "&lt;", "&gt;", "&quot;", "&#x27;", "&apos;"
+      ]
+    },
+    "policies": {
+      "minimal": {
+        "allowedTags": ["p", "br", "strong", "em"],
+        "allowedAttributes": ["class"],
+        "allowedProtocols": ["https:"],
+        "description": "Minimal policy for basic text formatting"
+      },
+      "basic": {
+        "allowedTags": ["p", "br", "strong", "em", "u", "i", "b", "span", "div", "h1", "h2", "h3"],
+        "allowedAttributes": ["class", "id", "title"],
+        "allowedProtocols": ["http:", "https:", "mailto:"],
+        "description": "Basic policy for simple content"
+      },
+      "standard": {
+        "allowedTags": ["p", "br", "strong", "em", "u", "i", "b", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "img"],
+        "allowedAttributes": ["class", "id", "title", "alt", "href", "src", "width", "height", "target", "rel"],
+        "allowedProtocols": ["http:", "https:", "mailto:", "tel:"],
+        "description": "Standard policy for rich content"
+      },
+      "extended": {
+        "allowedTags": ["p", "br", "strong", "em", "u", "i", "b", "span", "div", "h1", "h2", "h3", "h4", "h5", "h6", "ul", "ol", "li", "a", "img", "table", "thead", "tbody", "tr", "td", "th", "blockquote", "code", "pre"],
+        "allowedAttributes": ["class", "id", "title", "alt", "href", "src", "width", "height", "target", "rel", "type", "colspan", "rowspan", "scope"],
+        "allowedProtocols": ["http:", "https:", "mailto:", "ftp:", "tel:", "sms:"],
+        "description": "Extended policy for full-featured content"
+      }
+    },
+    "xssPatterns": {
+      "high_risk": [
+        "/<script[\\s\\S]*?<\\/script>/gi",
+        "/javascript:/gi",
+        "/vbscript:/gi",
+        "/on\\w+\\s*=/gi",
+        "/expression\\s*\\(/gi"
+      ],
+      "medium_risk": [
+        "/<iframe[\\s\\S]*?>/gi",
+        "/<object[\\s\\S]*?>/gi",
+        "/<embed[\\s\\S]*?>/gi",
+        "/<link[\\s\\S]*?>/gi",
+        "/url\\s*\\(/gi"
+      ],
+      "low_risk": [
+        "/<meta[\\s\\S]*?>/gi",
+        "/&#x?[0-9a-f]+;?/gi",
+        "/<style[\\s\\S]*?<\\/style>/gi"
+      ]
+    },
+    "cspTemplates": {
+      "strict": {
+        "default-src": ["'self'"],
+        "script-src": ["'self'"],
+        "style-src": ["'self'"],
+        "img-src": ["'self'", "data:"],
+        "font-src": ["'self'"],
+        "connect-src": ["'self'"],
+        "media-src": ["'none'"],
+        "object-src": ["'none'"],
+        "child-src": ["'none'"],
+        "frame-src": ["'none'"],
+        "worker-src": ["'none'"],
+        "frame-ancestors": ["'none'"],
+        "form-action": ["'self'"],
+        "base-uri": ["'self'"],
+        "manifest-src": ["'self'"]
+      },
+      "moderate": {
+        "default-src": ["'self'"],
+        "script-src": ["'self'", "'unsafe-inline'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["'self'", "data:", "https:"],
+        "font-src": ["'self'", "https:"],
+        "connect-src": ["'self'"],
+        "media-src": ["'self'"],
+        "object-src": ["'none'"],
+        "child-src": ["'self'"],
+        "frame-src": ["'self'"],
+        "worker-src": ["'self'"],
+        "frame-ancestors": ["'self'"],
+        "form-action": ["'self'"],
+        "base-uri": ["'self'"]
+      },
+      "permissive": {
+        "default-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+        "style-src": ["'self'", "'unsafe-inline'"],
+        "img-src": ["*", "data:", "blob:"],
+        "font-src": ["*"],
+        "connect-src": ["*"],
+        "media-src": ["*"],
+        "object-src": ["*"],
+        "child-src": ["*"],
+        "frame-src": ["*"],
+        "worker-src": ["*"]
+      }
+    },
+    "dangerousElements": {
+      "scripts": ["script", "noscript"],
+      "objects": ["object", "embed", "applet"],
+      "frames": ["iframe", "frame", "frameset", "noframes"],
+      "forms": ["form", "input", "textarea", "select", "option", "button", "fieldset", "legend", "label", "optgroup"],
+      "meta": ["meta", "link", "base", "title", "head", "html", "body"],
+      "style": ["style"],
+      "deprecated": ["font", "center", "marquee", "blink", "nobr", "plaintext", "xmp", "listing"]
+    },
+    "safeSubsets": {
+      "textOnly": {
+        "tags": ["p", "br", "strong", "em", "i", "b", "u"],
+        "attributes": [],
+        "description": "Only basic text formatting"
+      },
+      "basicFormatting": {
+        "tags": ["p", "br", "strong", "em", "i", "b", "u", "span", "div", "h1", "h2", "h3"],
+        "attributes": ["class", "id"],
+        "description": "Basic formatting with headers and containers"
+      },
+      "listAndLinks": {
+        "tags": ["p", "br", "strong", "em", "i", "b", "u", "span", "div", "h1", "h2", "h3", "ul", "ol", "li", "a"],
+        "attributes": ["class", "id", "href", "target", "rel"],
+        "description": "Text formatting plus lists and links"
+      },
+      "mediaContent": {
+        "tags": ["p", "br", "strong", "em", "i", "b", "u", "span", "div", "h1", "h2", "h3", "ul", "ol", "li", "a", "img"],
+        "attributes": ["class", "id", "href", "target", "rel", "src", "alt", "width", "height"],
+        "description": "Rich content with images"
+      }
+    },
+    "encoding": {
+      "htmlEntities": {
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#x27;",
+        "/": "&#x2F;",
+        "`": "&#x60;",
+        "=": "&#x3D;"
+      },
+      "jsEscaping": {
+        "\"": "\\\"",
+        "'": "\\'",
+        "\\": "\\\\",
+        "\n": "\\n",
+        "\r": "\\r",
+        "\t": "\\t",
+        "\b": "\\b",
+        "\f": "\\f",
+        "\v": "\\v",
+        "\0": "\\0"
+      },
+      "cssEscaping": {
+        "method": "unicode",
+        "allowedChars": "a-zA-Z0-9\\-_"
+      },
+      "urlEncoding": {
+        "reservedChars": [":/?#[]@", "!"onafterprint",
+        "onbeforeprint", "onbeforeunload", "onhashchange", "onmessage'()*+,;=", " "],
+        "method": "percent"
+      }
+    },
+    "validation": {
+      "maxContentLength": 1000000,
+      "maxTagDepth": 50,
+      "maxAttributes": 20,
+      "allowedCharsets": ["UTF-8", "ISO-8859-1"],
+      "blockedMimeTypes": ["text/javascript", "application/javascript", "text/vbscript"]
+    }
+  },
+
+  "whitelist-tags.json": [
+    "a", "abbr", "acronym", "address", "area", "article", "aside", "audio", "b",
+    "bdi", "bdo", "big", "blockquote", "br", "button", "canvas", "caption",
+    "center", "cite", "code", "col", "colgroup", "command", "datalist", "dd",
+    "del", "details", "dfn", "dialog", "dir", "div", "dl", "dt", "em", "fieldset",
+    "figcaption", "figure", "font", "footer", "form", "frame", "frameset", "h1",
+    "h2", "h3", "h4", "h5", "h6", "head", "header", "hgroup", "hr", "html", "i",
+    "iframe", "img", "input", "ins", "kbd", "keygen", "label", "legend", "li",
+    "link", "main", "map", "mark", "menu", "menuitem", "meta", "meter", "nav",
+    "noframes", "noscript", "object", "ol", "optgroup", "option", "output", "p",
+    "param", "pre", "progress", "q", "rp", "rt", "ruby", "s", "samp", "script",
+    "section", "select", "small", "source", "span", "strike", "strong", "style",
+    "sub", "summary", "sup", "table", "tbody", "td", "textarea", "tfoot", "th",
+    "thead", "time", "title", "tr", "track", "tt", "u", "ul", "var", "video", "wbr"
+  ],
+
+  "blacklist-tags.json": [
+    "script", "iframe", "object", "embed", "form", "input", "textarea", "select",
+    "option", "button", "link", "meta", "style", "title", "head", "html", "body",
+    "frameset", "frame", "noframes", "applet", "base", "basefont", "bgsound",
+    "blink", "comment", "isindex", "keygen", "listing", "marquee", "nextid",
+    "nobr", "plaintext", "spacer", "wbr", "xmp", "xml", "noscript"
+  ],
+
+  "whitelist-attributes.json": [
+    "class", "id", "title", "alt", "href", "src", "width", "height", "target",
+    "rel", "type", "role", "aria-label", "aria-describedby", "aria-hidden",
+    "aria-expanded", "aria-controls", "data-toggle", "data-target", "data-dismiss",
+    "colspan", "rowspan", "scope", "headers", "abbr", "axis", "nowrap", "bgcolor",
+    "align", "valign", "char", "charoff", "span", "size", "face", "color",
+    "start", "reversed", "compact", "clear", "noshade", "multiple", "selected",
+    "checked", "disabled", "readonly", "required", "autofocus", "placeholder",
+    "pattern", "min", "max", "step", "list", "autocomplete", "spellcheck",
+    "translate", "dir", "lang", "tabindex", "accesskey", "contenteditable",
+    "draggable", "dropzone", "hidden", "contextmenu"
+  ],
+
+  "blacklist-attributes.json": [
+    "onclick", "ondblclick", "onmousedown", "onmouseup", "onmouseover", "onmousemove",
+    "onmouseout", "onfocus", "onblur", "onkeypress", "onkeydown", "onkeyup",
+    "onsubmit", "onreset", "onselect", "onchange", "onload", "onunload", "onerror",
+    "onabort", "oncanplay", "oncanplaythrough", "oncuechange", "ondurationchange",
+    "onemptied", "onended", "onloadeddata", "onloadedmetadata", "onloadstart",
+    "onpause", "onplay", "onplaying", "onprogress", "onratechange", "onseeked",
+    "onseeking", "onstalled", "onsuspend", "ontimeupdate", "onvolumechange",
+    "onwaiting", "onafterprint", "onbeforeprint", "onbeforeunload", "onhashchange",
+    "onmessage", "onoffline", "ononline", "onpagehide", "onpageshow", "onpopstate",
+    "onresize", "onstorage", "oncontextmenu", "oninput", "oninvalid", "onsearch",
+    "ondrag", "ondragend", "ondragenter", "ondragleave", "ondragover", "ondragstart",
+    "ondrop", "onscroll", "oncopy", "oncut", "onpaste", "onwheel", "ontoggle",
+    "onshow", "style", "background", "background-image", "expression", "javascript",
+    "vbscript", "livescript", "mocha", "feed", "xml-stylesheet", "binding",
+    "import", "behavior", "datasrc", "datafld", "dataformatas", "datapagesize"
+  ]
+}

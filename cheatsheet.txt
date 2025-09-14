@@ -1,0 +1,6 @@
+git checkout -b feature/new-idea   # tạo nhánh
+# code, commit...
+git push -u origin feature/new-idea
+# khi xong, gộp lại
+git merge feature/new-idea
+git branch -d feature/new-idea

@@ -1,7 +1,7 @@
 // scripts/validate-data.js - Data validation script
-const fs = require('fs');
-const path = require('path');
 
+import path from 'path';
+import fs from 'fs';
 console.log('🔍 Validating data files...\n');
 
 // Check if required files exist
@@ -30,10 +30,10 @@ if (!allFilesExist) {
 }
 // Validate JSON structure
 try {
-  const entities = require('../data/entities.json');
-  const decodeMap = require('../data/decode-map.json');
-  const encodeMapFull = require('../data/encode-map-full.json');
-  const encodeMapLite = require('../data/encode-map-lite.json');
+  const entities = require('../../data/entities.json');
+  const decodeMap = require('../../data/decode-map.json');
+  const encodeMapFull = require('../../data/encode-map-full.json');
+  const encodeMapLite = require('../../data/encode-map-lite.json');
   
   console.log('\n📊 Data Statistics:');
   console.log(`  Entities: ${Object.keys(entities).length}`);

@@ -1,17 +1,9 @@
-import {decodeLite, encodeLite} from "./lite"
-import {decodeHtml, encodeHtml} from "./core"
+import {decodeLite, encodeLite} from "./core/lite"
+import {decodeHtml, encodeHtml} from "./core/core"
 import {encodeHtmlMinimal, encodeHtmlAttribute, escapeHtml, unescapeHtml} from "./convenience"
-import {sanitizeHtml, stripEntities, isSafeHtml} from "./security"
+import {sanitizeHtml, stripEntities, isSafeHtml} from "./security/base_security"
 import {isValidCodePoint, toSafeDisplay, escapeForRegex} from "./utils"
-import {hasEntities, findEntities, validateEntities, normalizeEntities, countEntities, listUniqueEntities, getEntityStats,searchEntities} from "./analysis"
-// Main export object
+import {hasEntities, findEntities, validateEntities, normalizeEntities, countEntities, listUniqueEntities, getEntityStats,searchEntities,quickEncode} from "./analysis"
+import {autoEscape, encodeHtmlText, encodeHtmlJsString, encodeHtmlUrlParam, encodeArray, decodeArray, stripHtmlTags, truncateHtmlSafe, balanceHtmlTags, encodeObjectValues, decodeObjectValues, deepEncode, deepDecode, decodeHtmlLazy, escapeCss, encodeMap, decodeMap} from "./convenience"
 
-module.exports = {
-  core: { decodeHtml, encodeHtml },
-  lite: { decodeLite, encodeLite },
-  convenience: { encodeHtmlMinimal, encodeHtmlAttribute, escapeHtml, unescapeHtml },
-  analysis: { hasEntities, findEntities, validateEntities, normalizeEntities,
-              countEntities, listUniqueEntities, getEntityStats, searchEntities },
-  security: { sanitizeHtml, stripEntities, isSafeHtml },
-  utils: { isValidCodePoint, toSafeDisplay, escapeForRegex }
-};
+// Main export object

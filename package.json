@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "node scripts/build-encode-map.js",
-    "test": "node tests/comprehensive.test.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
     "test:decode": "node tests/decode.test.js",
     "benchmark": "node scripts/benchmark.js",
     "validate": "node scripts/validate-data.js",
@@ -54,6 +54,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0",
+    "jest": "^29.7.0",
     "prettier": "^3.2.5",
     "typescript": "^5.3.3"
   },
@@ -87,5 +88,10 @@
   "funding": {
     "type": "individual",
     "url": "https://github.com/sponsors/yourusername"
+  },
+  "type": "module",
+  "sideEffects": false,
+  "dependencies": {
+    "@jest/globals": "^29.7.0"
   }
 }

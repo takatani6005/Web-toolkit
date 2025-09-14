@@ -1,5 +1,5 @@
 // scripts/benchmark.js - Performance benchmarking
-const { decodeHtml, encodeHtml } = require('../src/numericEntities');
+const { decodeHtml, encodeHtml } = require('../src/core');
 const { decodeLite, encodeLite } = require('../src/lite');
 
 // Sample test data

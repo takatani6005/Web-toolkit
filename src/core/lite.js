@@ -40,4 +40,4 @@ function encodeLite(str) {
   });
 }
 
-module.exports = { decodeLite, encodeLite };
+export { decodeLite, encodeLite };
