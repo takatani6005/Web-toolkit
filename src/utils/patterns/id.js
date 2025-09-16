@@ -378,7 +378,7 @@ export const ID_PRESETS = {
   })
 };
 
-export default {
+export {
   generateUuidPattern,
   generateNanoIdPattern,
   generateObjectIdPattern,
@@ -392,5 +392,4 @@ export default {
   validateId,
   parseUuid,
   generateMultiplePatterns,
-  ID_PRESETS
 };

@@ -548,7 +548,7 @@ export function generateQuotedStringPattern(options = {}) {
 }
 
 // Export all pattern generators
-export const miscPatterns = {
+export {
   generateUsernamePattern,
   generateSlugPattern,
   generateFileNamePattern,

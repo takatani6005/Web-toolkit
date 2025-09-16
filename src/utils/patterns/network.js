@@ -459,7 +459,7 @@ export const PATTERNS = {
   CIDR_IPV6: generateCidrPattern({ ipv6Only: true })
 };
 
-export default {
+export {
   generateIpv4Pattern,
   generateIpv6Pattern,
   generateIpPattern,
@@ -470,5 +470,4 @@ export default {
   generateNetworkInterfacePattern,
   generateCidrPattern,
   generateHostnamePattern,
-  PATTERNS
 };

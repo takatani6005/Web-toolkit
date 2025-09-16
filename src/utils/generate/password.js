@@ -19,7 +19,7 @@
  * @returns {string} Generated password
  * @throws {Error} When invalid parameters are provided
  */
-export function generatePassword(options = {}) {
+ function generatePassword(options = {}) {
   const {
     length = 12,
     includeUppercase = true,
@@ -113,7 +113,7 @@ export function generatePassword(options = {}) {
  * @param {string} password - Password to analyze
  * @returns {Object} Strength analysis object
  */
-export function analyzePasswordStrength(password) {
+ function analyzePasswordStrength(password) {
   if (typeof password !== 'string') {
     throw new Error('Password must be a string');
   }
@@ -188,7 +188,7 @@ export function analyzePasswordStrength(password) {
  * @param {boolean} [options.capitalizeWords=true] - Capitalize first letter of each word
  * @returns {string} Generated memorable password
  */
-export function generateMemorablePassword(options = {}) {
+ function generateMemorablePassword(options = {}) {
   const {
     wordCount = 3,
     separator = '-',
@@ -325,4 +325,10 @@ function hasSequentialChars(password) {
   }
 
   return false;
+}
+
+export {
+    generatePassword,
+    analyzePasswordStrength,
+    generateMemorablePassword,
 }

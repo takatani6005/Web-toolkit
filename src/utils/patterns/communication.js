@@ -503,8 +503,4 @@ export {
  generateMACPattern,
  validateEmail,
  validatePhone,
-  patterns,
-  validators,
-  communicationUtils,
-  LOCALE_PATTERNS
 };

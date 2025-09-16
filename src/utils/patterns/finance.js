@@ -465,10 +465,7 @@ function generateFinancialPattern(type, options = {}) {
 }
 
 // Export all functions and constants
-export default {
-  // Constants
-  CREDIT_CARD_TYPES,
-  IBAN_PATTERNS,
+export {
   
   // Credit Card functions
   generateCreditCardPattern,
@@ -482,5 +479,5 @@ export default {
   generateSortCodePattern,
   generateBsbPattern,
   generateFinancialPattern
-  
+
 }

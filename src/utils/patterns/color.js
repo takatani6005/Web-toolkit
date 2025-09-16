@@ -326,6 +326,27 @@
   return new RegExp(`^(?:${patterns.join('|')})$`, flags);
 }
 
+/** * Generate CMYK color pattern
+ * @param {Object} options - Configuration options
+ * @returns {RegExp} CMYK pattern regex
+ */
+function generateCmykColorPattern(options = {}) {
+    const { anchors = true, capture = false } = options;
+
+    const num = '(?:100(?:\\.0+)?|\\d{1,2}(?:\\.\\d+)?)';
+    const numWithPercent = num + '%?';
+    const sep = '(?:\\s*,\\s*|\\s+)';
+    const group = capture ? '(' + numWithPercent + ')' : '(?:' + numWithPercent + ')';
+
+    const pattern = (anchors ? '^\\s*' : '') +
+    '[cC][mM][yY][kK]\\(\\s*' +
+    group + sep + group + sep + group + sep + group +
+    '\\s*\\)' +
+    (anchors ? '\\s*$' : '');
+
+    return new RegExp(pattern, 'i');
+}
+
 // Export all functions for easy import
 export {
   generateRgbColorPattern,
@@ -338,5 +359,6 @@ export {
   generateHexColorPattern,
   generateNamedColorPattern,
   generateColorFunctionPattern,
-  generateUniversalColorPattern
+  generateUniversalColorPattern,
+  generateCmykColorPattern
 };
