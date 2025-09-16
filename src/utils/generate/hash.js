@@ -11,9 +11,13 @@
  * @returns {number|string} Generated hash
  * @throws {Error} When unsupported algorithm is specified
  */
-export function generateHash(str, algorithm = 'djb2', options = {}) {
+export function generateHash(str, algorithm='djb2', options = {}) {
+
   if (typeof str !== 'string') {
     throw new Error('Input must be a string');
+  }
+  if (typeof algorithm !== 'string' || !algorithm.trim()) {
+    throw new Error('Invalid algorithm');
   }
 
   const algorithms = {
@@ -32,6 +36,7 @@ export function generateHash(str, algorithm = 'djb2', options = {}) {
     throw new Error(`Hash algorithm '${algorithm}' not supported. Available: ${available}`);
   }
   
+
   return hashFn(str, options);
 }
 
@@ -63,8 +68,9 @@ function hashDjb2(str) {
   let hash = 5381;
   for (let i = 0; i < str.length; i++) {
     hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    hash = hash & 0xffffffff;           // giới hạn 32-bit
   }
-  return hash >>> 0; // Convert to unsigned 32-bit integer
+  return hash >>> 0;                     // ép về unsigned
 }
 
 /**
@@ -75,6 +81,7 @@ function hashSdbm(str) {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     hash = str.charCodeAt(i) + (hash << 6) + (hash << 16) - hash;
+    hash = hash & 0xffffffff;
   }
   return hash >>> 0;
 }
@@ -88,9 +95,10 @@ function hashSimple(str) {
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = ((hash << 5) - hash) + char;
-    hash = hash & hash; // Convert to 32-bit integer
+    //hash = hash & hash; // Convert to 32-bit integer
+    hash = hash & 0xffffffff;
   }
-  return Math.abs(hash);
+  return hash >>> 0;
 }
 
 /**
@@ -103,6 +111,7 @@ function hashFnv1a(str) {
   for (let i = 0; i < str.length; i++) {
     hash ^= str.charCodeAt(i);
     hash += (hash << 1) + (hash << 4) + (hash << 7) + (hash << 8) + (hash << 24);
+    hash = hash & 0xffffffff;
   }
   
   return hash >>> 0;
@@ -166,7 +175,7 @@ function hashMurmur3(str, options = {}) {
   hash ^= hash >>> 13;
   hash = Math.imul(hash, 0xc2b2ae35);
   hash ^= hash >>> 16;
-  
+  hash = hash & 0xffffffff;
   return hash >>> 0;
 }
 
@@ -218,7 +227,8 @@ function hashAdler32(str) {
     b = (b + a) % MOD_ADLER;
   }
   
-  return (b << 16) | a;
+  return ( (b << 16) | a ) >>> 0;
+
 }
 
 /**

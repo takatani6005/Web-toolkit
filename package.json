@@ -93,5 +93,6 @@
   "sideEffects": false,
   "dependencies": {
     "@jest/globals": "^29.7.0"
-  }
+  },
+  "private": true
 }

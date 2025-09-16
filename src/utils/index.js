@@ -73,20 +73,6 @@ export {
   batchEscape,
   escapeIfNeeded
 } from './escape.js';
-export {
-  toSlug,
-  toBase64,
-  fromBase64,
-  generateRandomUnicode,
-  generateId,
-  generatePassword,
-  generateUuid,
-  generateNanoId,
-  generateHash,
-  generatePlaceholder,
-  generateTestData,
-  generateRegexPattern
-} from './generate.js';
 export { 
   stripNonPrintable,
   hasUnsafeChars,

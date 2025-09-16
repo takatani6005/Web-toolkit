@@ -15,7 +15,7 @@
  * @param {string[]} [options.customWords] - Custom word list to use instead of Lorem Ipsum
  * @returns {string} Generated placeholder text
  */
-export function generatePlaceholder(options = {}) {
+function generatePlaceholder(options = {}) {
   const {
     type = 'text',
     length = 50,
@@ -25,6 +25,23 @@ export function generatePlaceholder(options = {}) {
     startWithLorem = true,
     customWords
   } = options;
+
+  // Validate parameters
+  if (typeof length !== 'number' || length < 0) {
+    throw new Error('Length must be a non-negative number');
+  }
+  if (typeof sentences !== 'number' || sentences < 1) {
+    throw new Error('Sentences must be a positive number');
+  }
+  if (typeof paragraphs !== 'number' || paragraphs < 1) {
+    throw new Error('Paragraphs must be a positive number');
+  }
+
+  // Validate type
+  const validTypes = ['text', 'words', 'sentences', 'paragraphs', 'html'];
+  if (!validTypes.includes(type)) {
+    throw new Error(`Invalid placeholder type '${type}'. Valid types are not supported for this type.`);
+  }
   
   const defaultWords = [
     'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
@@ -69,6 +86,7 @@ export function generatePlaceholder(options = {}) {
   
   switch (type) {
     case 'words':
+      if (length === 0) return '';
       const wordList = [];
       if (startWithLorem && !customWords && length >= 2) {
         wordList.push('lorem', 'ipsum');
@@ -102,6 +120,7 @@ export function generatePlaceholder(options = {}) {
       const htmlPara = generateParagraph(sentences, true);
       return `<div class="placeholder">\n  <p>${htmlPara}</p>\n</div>`;
     
+    case 'text':
     default:
       return generateParagraph(sentences, true);
   }
@@ -110,17 +129,46 @@ export function generatePlaceholder(options = {}) {
 /**
  * Generate various types of test data
  * @param {string} type - Type of test data to generate
- * @param {number} [count=1] - Number of items to generate
+ * @param {number} [count] - Number of items to generate (if omitted, returns single item)
  * @param {Object} [options={}] - Additional options
  * @returns {string|string[]} Generated test data
  */
-export function generateTestData(type, count = 1, options = {}) {
+function generateTestData(type, count, options = {}) {
+  // Validate inputs - handle all edge cases
+  if (type === null || type === undefined) {
+    throw new Error('Type is not supported. Must be a non-empty string');
+  }
+  
+  if (typeof type !== 'string') {
+    throw new Error('Type is not supported. Must be a non-empty string');
+  }
+  
+  if (!type.trim()) {
+    throw new Error('Type is not supported. Must be a non-empty string');
+  }
+
+  // If count is not provided, return single item
+  const returnSingle = count === undefined;
+  
+  // Default count to 1 if not provided
+  if (count === undefined) count = 1;
+
+  if (typeof count !== 'number' || count < 0 || !Number.isInteger(count)) {
+    throw new Error('Count must be a non-negative integer');
+  }
+
+  // Validate type first, before trying to use it
+  const supportedTypes = ['email', 'url', 'phone', 'name', 'date', 'time', 'datetime', 'color', 'number', 'boolean', 'json', 'csv', 'username', 'company', 'product', 'sentence', 'paragraph'];
+  
+  if (!supportedTypes.includes(type)) {
+    throw new Error(`Test data type '${type}' is not supported. Available types: ${supportedTypes.join(', ')}`);
+  }
+
   const generators = {
     email: generateEmail,
     url: generateUrl,
     phone: generatePhone,
     name: generateName,
-    address: generateAddress,
     date: generateDate,
     time: generateTime,
     datetime: generateDateTime,
@@ -137,15 +185,17 @@ export function generateTestData(type, count = 1, options = {}) {
   };
   
   const generator = generators[type];
-  if (!generator) {
-    const available = Object.keys(generators).join(', ');
-    throw new Error(`Test data type '${type}' not supported. Available: ${available}`);
+
+  if (count === 0) {
+    return [];
   }
   
-  if (count === 1) {
+  // If count was not explicitly provided, return single item
+  if (returnSingle) {
     return generator(options);
   }
   
+  // If count was explicitly provided (even if 1), return array
   return Array.from({length: count}, () => generator(options));
 }
 
@@ -217,12 +267,12 @@ function generateName(options = {}) {
   const { type = 'full', gender } = options;
   
   const firstNames = {
-    male: ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Christopher'],
-    female: ['Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen'],
+    male: ['James', 'John', 'Robert', 'Michael', 'William', 'David', 'Richard', 'Joseph', 'Thomas', 'Christopher', 'Daniel', 'Matthew', 'Anthony', 'Mark', 'Donald'],
+    female: ['Mary', 'Patricia', 'Jennifer', 'Linda', 'Elizabeth', 'Barbara', 'Susan', 'Jessica', 'Sarah', 'Karen', 'Lisa', 'Nancy', 'Betty', 'Dorothy', 'Sandra'],
     neutral: ['Alex', 'Taylor', 'Jordan', 'Casey', 'Riley', 'Avery', 'Quinn', 'Sage', 'River', 'Phoenix']
   };
   
-  const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez'];
+  const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin', 'Lee', 'Perez', 'Thompson', 'White', 'Harris', 'Sanchez', 'Clark', 'Ramirez', 'Lewis', 'Robinson', 'Walker', 'Young', 'Allen', 'King', 'Wright'];
   
   let firstNameList = firstNames.neutral;
   if (gender === 'male') firstNameList = [...firstNames.male, ...firstNames.neutral];
@@ -617,3 +667,8 @@ function getTopicWords(topic) {
   
   return topics[topic] || null;
 }
+
+export {
+  generatePlaceholder,
+  generateTestData
+};

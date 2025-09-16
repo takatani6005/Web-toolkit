@@ -11,6 +11,9 @@
  * @throws {Error} When unsupported version is requested
  */
 export function generateUuid(version = 4, secure = false) {
+  if (typeof version !== 'number' || version < 0) {
+    throw new Error('Invalid UUID version');
+  }
   if (version === 4) {
     if (secure && typeof crypto !== 'undefined' && crypto.getRandomValues) {
       // Cryptographically secure UUID v4
@@ -62,94 +65,6 @@ export function generateUuid(version = 4, secure = false) {
   }
   
   throw new Error(`UUID version ${version} not supported`);
-}
-
-/**
- * Generate a NanoID (compact, URL-safe unique ID)
- * @param {Object} options - Configuration options
- * @param {number} [options.size=21] - Length of the generated ID
- * @param {string} [options.alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-'] - Custom alphabet
- * @param {boolean} [options.secure=true] - Use cryptographically secure random generation
- * @returns {string} Generated NanoID
- */
-export function generateNanoId(options = {}) {
-  const {
-    size = 21,
-    alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',
-    secure = true
-  } = options;
-
-  if (typeof size !== 'number' || !Number.isInteger(size) || size < 1) {
-    throw new Error('Size must be a positive integer');
-  }
-
-  if (size > 256) {
-    throw new Error('Size cannot exceed 256');
-  }
-
-  if (typeof alphabet !== 'string' || alphabet.length === 0) {
-    throw new Error('Alphabet must be a non-empty string');
-  }
-
-  if (alphabet.length > 256) {
-    throw new Error('Alphabet cannot exceed 256 characters');
-  }
-
-  // Check for duplicate characters in alphabet
-  if (new Set(alphabet).size !== alphabet.length) {
-    throw new Error('Alphabet cannot contain duplicate characters');
-  }
-
-  let id = '';
-  const mask = (2 << Math.log(alphabet.length - 1) / Math.LN2) - 1;
-  const step = -~(1.6 * mask * size / alphabet.length);
-  
-  if (secure && typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    // Browser crypto API
-    while (true) {
-      const bytes = crypto.getRandomValues(new Uint8Array(step));
-      
-      for (let i = 0; i < step; i++) {
-        const byte = bytes[i] & mask;
-        if (alphabet[byte]) {
-          id += alphabet[byte];
-          if (id.length === size) return id;
-        }
-      }
-    }
-  } else if (secure && typeof require !== 'undefined') {
-    // Node.js crypto module
-    try {
-      const crypto = require('crypto');
-      
-      while (true) {
-        const bytes = crypto.randomBytes(step);
-        
-        for (let i = 0; i < step; i++) {
-          const byte = bytes[i] & mask;
-          if (alphabet[byte]) {
-            id += alphabet[byte];
-            if (id.length === size) return id;
-          }
-        }
-      }
-    } catch (err) {
-      console.warn('Secure NanoID generation requested but crypto not available, falling back to Math.random');
-    }
-  }
-
-  // Fallback to Math.random
-  while (true) {
-    const bytes = Array.from({length: step}, () => Math.floor(Math.random() * 256));
-    
-    for (let i = 0; i < step; i++) {
-      const byte = bytes[i] & mask;
-      if (alphabet[byte]) {
-        id += alphabet[byte];
-        if (id.length === size) return id;
-      }
-    }
-  }
 }
 
 /**
@@ -205,12 +120,13 @@ export function validateNanoId(id, alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefg
  * @returns {string} Generated NanoID
  */
 export function generateNanoId(options = {}) {
+
   const {
     size = 21,
     alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_-',
     secure = true
   } = options;
-
+  
   if (typeof size !== 'number' || !Number.isInteger(size) || size < 1) {
     throw new Error('Size must be a positive integer');
   }
@@ -219,7 +135,7 @@ export function generateNanoId(options = {}) {
     throw new Error('Size cannot exceed 256');
   }
 
-  if (typeof alphabet !== 'string' || alphabet.length === 0) {
+  if (alphabet==null || typeof alphabet !== 'string' || alphabet.length === 0) {
     throw new Error('Alphabet must be a non-empty string');
   }
 
@@ -270,7 +186,7 @@ export function generateNanoId(options = {}) {
     }
   }
 
-  return regex.test(id);
+  return id;
 }
 
 /**

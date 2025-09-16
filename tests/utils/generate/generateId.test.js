@@ -1,6 +1,5 @@
 import { describe, test, expect, beforeAll, afterAll,jest } from '@jest/globals';
-
-import {generateId} from '../../../src/utils/generate/index.js'
+import {generateId,generateIdBatch, validateId} from '../../../src/utils/generate/index.js'
 // Mock crypto for testing
 const mockCrypto = {
   getRandomValues: jest.fn((array) => {
@@ -267,188 +266,188 @@ describe('generateId', () => {
   });
 });
 
-// describe('generateIdBatch', () => {
-//   describe('Basic functionality', () => {
-//     test('should generate requested number of IDs', () => {
-//       const ids = generateIdBatch(5, { length: 8 });
-//       expect(ids).toHaveLength(5);
-//       ids.forEach(id => {
-//         expect(id).toHaveLength(8);
-//         expect(id).toMatch(/^[A-Za-z0-9]{8}$/);
-//       });
-//     });
+describe('generateIdBatch', () => {
+  describe('Basic functionality', () => {
+    test('should generate requested number of IDs', () => {
+      const ids = generateIdBatch(5, { length: 8 });
+      expect(ids).toHaveLength(5);
+      ids.forEach(id => {
+        expect(id).toHaveLength(8);
+        expect(id).toMatch(/^[A-Za-z0-9]{8}$/);
+      });
+    });
 
-//     test('should generate unique IDs', () => {
-//       const ids = generateIdBatch(50, { length: 12 });
-//       const uniqueIds = new Set(ids);
-//       expect(uniqueIds.size).toBe(50);
-//     });
+    test('should generate unique IDs', () => {
+      const ids = generateIdBatch(50, { length: 12 });
+      const uniqueIds = new Set(ids);
+      expect(uniqueIds.size).toBe(50);
+    });
 
-//     test('should handle zero count', () => {
-//       const ids = generateIdBatch(0);
-//       expect(ids).toHaveLength(0);
-//     });
-//   });
+    test('should handle zero count', () => {
+      const ids = generateIdBatch(0);
+      expect(ids).toHaveLength(0);
+    });
+  });
 
-//   describe('Input validation', () => {
-//     test('should throw error for negative count', () => {
-//       expect(() => generateIdBatch(-1)).toThrow('Count must be a non-negative integer');
-//     });
+  describe('Input validation', () => {
+    test('should throw error for negative count', () => {
+      expect(() => generateIdBatch(-1)).toThrow('Count must be a non-negative integer');
+    });
 
-//     test('should throw error for non-integer count', () => {
-//       expect(() => generateIdBatch(3.14)).toThrow('Count must be a non-negative integer');
-//       expect(() => generateIdBatch('5')).toThrow('Count must be a non-negative integer');
-//     });
+    test('should throw error for non-integer count', () => {
+      expect(() => generateIdBatch(3.14)).toThrow('Count must be a non-negative integer');
+      expect(() => generateIdBatch('5')).toThrow('Count must be a non-negative integer');
+    });
 
-//     test('should throw error for batch size too large', () => {
-//       expect(() => generateIdBatch(10001)).toThrow('Batch size too large, maximum is 10000');
-//     });
-//   });
+    test('should throw error for batch size too large', () => {
+      expect(() => generateIdBatch(10001)).toThrow('Batch size too large, maximum is 10000');
+    });
+  });
 
-//   describe('Collision handling', () => {
-//     test('should warn when unable to generate enough unique IDs', () => {
-//       const mockWarn = jest.fn();
-//       console.warn = mockWarn;
+  describe('Collision handling', () => {
+    test('should warn when unable to generate enough unique IDs', () => {
+      const mockWarn = jest.fn();
+      console.warn = mockWarn;
       
-//       // Use very short length and small charset to force collisions
-//       const ids = generateIdBatch(10, { 
-//         length: 1, 
-//         charset: 'AB' 
-//       });
+      // Use very short length and small charset to force collisions
+      const ids = generateIdBatch(10, { 
+        length: 1, 
+        charset: 'AB' 
+      });
       
-//       expect(ids.length).toBeLessThanOrEqual(10);
-//       expect(mockWarn).toHaveBeenCalledWith(
-//         expect.stringContaining('Could only generate')
-//       );
-//     });
+      expect(ids.length).toBeLessThanOrEqual(10);
+      expect(mockWarn).toHaveBeenCalledWith(
+        expect.stringContaining('Could only generate')
+      );
+    });
 
-//     test('should apply options to all generated IDs', () => {
-//       const ids = generateIdBatch(3, { 
-//         prefix: 'test_', 
-//         suffix: '_end', 
-//         length: 5 
-//       });
+    test('should apply options to all generated IDs', () => {
+      const ids = generateIdBatch(3, { 
+        prefix: 'test_', 
+        suffix: '_end', 
+        length: 5 
+      });
       
-//       ids.forEach(id => {
-//         expect(id).toMatch(/^test_.{5}_end$/);
-//       });
-//     });
-//   });
-// });
+      ids.forEach(id => {
+        expect(id).toMatch(/^test_.{5}_end$/);
+      });
+    });
+  });
+});
 
-// describe('validateId', () => {
-//   describe('Basic validation', () => {
-//     test('should validate simple IDs', () => {
-//       expect(validateId('abcd1234', { length: 8 })).toBe(true);
-//       expect(validateId('ABCD1234', { charset: 'alphanumeric' })).toBe(true);
-//       expect(validateId('12345', { charset: 'numeric' })).toBe(true);
-//     });
+describe('validateId', () => {
+  describe('Basic validation', () => {
+    test('should validate simple IDs', () => {
+      expect(validateId('abcd1234', { length: 8 })).toBe(true);
+      expect(validateId('ABCD1234', { charset: 'alphanumeric' })).toBe(true);
+      expect(validateId('12345', { charset: 'numeric' })).toBe(true);
+    });
 
-//     test('should reject invalid input types', () => {
-//       expect(validateId(123)).toBe(false);
-//       expect(validateId(null)).toBe(false);
-//       expect(validateId(undefined)).toBe(false);
-//     });
+    test('should reject invalid input types', () => {
+      expect(validateId(123)).toBe(false);
+      expect(validateId(null)).toBe(false);
+      expect(validateId(undefined)).toBe(false);
+    });
 
-//     test('should validate charset constraints', () => {
-//       expect(validateId('ABCDEF', { charset: 'hex' })).toBe(true);
-//       expect(validateId('GHIJKL', { charset: 'hex' })).toBe(false);
-//       expect(validateId('12345', { charset: 'numeric' })).toBe(true);
-//       expect(validateId('1234a', { charset: 'numeric' })).toBe(false);
-//     });
-//   });
+    test('should validate charset constraints', () => {
+      expect(validateId('ABCDEF', { charset: 'hex' })).toBe(true);
+      expect(validateId('GHIJKL', { charset: 'hex' })).toBe(false);
+      expect(validateId('12345', { charset: 'numeric' })).toBe(true);
+      expect(validateId('1234a', { charset: 'numeric' })).toBe(false);
+    });
+  });
 
-//   describe('Prefix and suffix validation', () => {
-//     test('should validate prefix and suffix', () => {
-//       expect(validateId('user_abc123', { prefix: 'user_' })).toBe(true);
-//       expect(validateId('abc123_end', { suffix: '_end' })).toBe(true);
-//       expect(validateId('user_abc123_end', { 
-//         prefix: 'user_', 
-//         suffix: '_end' 
-//       })).toBe(true);
-//     });
+  describe('Prefix and suffix validation', () => {
+    test('should validate prefix and suffix', () => {
+      expect(validateId('user_abc123', { prefix: 'user_' })).toBe(true);
+      expect(validateId('abc123_end', { suffix: '_end' })).toBe(true);
+      expect(validateId('user_abc123_end', { 
+        prefix: 'user_', 
+        suffix: '_end' 
+      })).toBe(true);
+    });
 
-//     test('should reject incorrect prefix/suffix', () => {
-//       expect(validateId('admin_abc123', { prefix: 'user_' })).toBe(false);
-//       expect(validateId('abc123_start', { suffix: '_end' })).toBe(false);
-//     });
-//   });
+    test('should reject incorrect prefix/suffix', () => {
+      expect(validateId('admin_abc123', { prefix: 'user_' })).toBe(false);
+      expect(validateId('abc123_start', { suffix: '_end' })).toBe(false);
+    });
+  });
 
-//   describe('Timestamp validation', () => {
-//     test('should validate IDs with timestamps', () => {
-//       expect(validateId('abc12-xyz789', { 
-//         includeTimestamp: true, 
-//         separator: '-' 
-//       })).toBe(true);
-//     });
+  describe('Timestamp validation', () => {
+    test('should validate IDs with timestamps', () => {
+      expect(validateId('abc12-xyz789', { 
+        includeTimestamp: true, 
+        separator: '-' 
+      })).toBe(true);
+    });
 
-//     test('should reject invalid timestamp format', () => {
-//       expect(validateId('abc12-XYZ789', { 
-//         includeTimestamp: true, 
-//         separator: '-' 
-//       })).toBe(false); // Uppercase not valid in base36
-//     });
+    test('should reject invalid timestamp format', () => {
+      expect(validateId('abc12-XYZ789', { 
+        includeTimestamp: true, 
+        separator: '-' 
+      })).toBe(false); // Uppercase not valid in base36
+    });
 
-//     test('should reject missing separator when expected', () => {
-//       expect(validateId('abc12xyz789', { 
-//         includeTimestamp: true, 
-//         separator: '-' 
-//       })).toBe(false);
-//     });
-//   });
+    test('should reject missing separator when expected', () => {
+      expect(validateId('abc12xyz789', { 
+        includeTimestamp: true, 
+        separator: '-' 
+      })).toBe(false);
+    });
+  });
 
-//   describe('Ambiguous character validation', () => {
-//     test('should validate when ambiguous characters are avoided', () => {
-//       expect(validateId('ABCDEF', { 
-//         charset: 'alphanumeric', 
-//         avoidAmbiguous: true 
-//       })).toBe(true);
+  describe('Ambiguous character validation', () => {
+    test('should validate when ambiguous characters are avoided', () => {
+      expect(validateId('ABCDEF', { 
+        charset: 'alphanumeric', 
+        avoidAmbiguous: true 
+      })).toBe(true);
       
-//       expect(validateId('ABC0EF', { 
-//         charset: 'alphanumeric', 
-//         avoidAmbiguous: true 
-//       })).toBe(false); // Contains '0' which is ambiguous
-//     });
-//   });
+      expect(validateId('ABC0EF', { 
+        charset: 'alphanumeric', 
+        avoidAmbiguous: true 
+      })).toBe(false); // Contains '0' which is ambiguous
+    });
+  });
 
-//   describe('Custom charset validation', () => {
-//     test('should validate custom charsets', () => {
-//       expect(validateId('XYZ123', { charset: 'XYZ123' })).toBe(true);
-//       expect(validateId('XYZ124', { charset: 'XYZ123' })).toBe(false); // '4' not in charset
-//     });
+  describe('Custom charset validation', () => {
+    test('should validate custom charsets', () => {
+      expect(validateId('XYZ123', { charset: 'XYZ123' })).toBe(true);
+      expect(validateId('XYZ124', { charset: 'XYZ123' })).toBe(false); // '4' not in charset
+    });
 
-//     test('should handle special characters in custom charset', () => {
-//       expect(validateId('+-*/', { charset: '+*/-' })).toBe(true);
-//       expect(validateId('abc', { charset: '+*/-' })).toBe(false);
-//     });
-//   });
+    test('should handle special characters in custom charset', () => {
+      expect(validateId('+-*/', { charset: '+*/-' })).toBe(true);
+      expect(validateId('abc', { charset: '+*/-' })).toBe(false);
+    });
+  });
 
-//   describe('Integration with generateId', () => {
-//     test('should validate IDs generated with same options', () => {
-//       const options = {
-//         length: 10,
-//         prefix: 'test_',
-//         suffix: '_end',
-//         charset: 'hex',
-//         includeTimestamp: true,
-//         separator: '-'
-//       };
+  describe('Integration with generateId', () => {
+    test('should validate IDs generated with same options', () => {
+      const options = {
+        length: 10,
+        prefix: 'test_',
+        suffix: '_end',
+        charset: 'hex',
+        includeTimestamp: true,
+        separator: '-'
+      };
       
-//       const id = generateId(options);
-//       expect(validateId(id, options)).toBe(true);
-//     });
+      const id = generateId(options);
+      expect(validateId(id, options)).toBe(true);
+    });
 
-//     test('should validate batch generated IDs', () => {
-//       const options = {
-//         length: 8,
-//         charset: 'base58',
-//         prefix: 'sk_'
-//       };
+    test('should validate batch generated IDs', () => {
+      const options = {
+        length: 8,
+        charset: 'base58',
+        prefix: 'sk_'
+      };
       
-//       const ids = generateIdBatch(5, options);
-//       ids.forEach(id => {
-//         expect(validateId(id, options)).toBe(true);
-//       });
-//     });
-//   });
-// });
+      const ids = generateIdBatch(5, options);
+      ids.forEach(id => {
+        expect(validateId(id, options)).toBe(true);
+      });
+    });
+  });
+});

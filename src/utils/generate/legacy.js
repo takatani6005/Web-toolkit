@@ -1,66 +1,7 @@
 /**
- * Legacy Generation utilities
+ * Legacy Generation utilities - Updated to match test expectations
  * Provides backward compatibility functions and additional string generation utilities
  */
-
-/**
- * Generate URL-friendly slug from text
- * @param {string} text - Text to convert to slug
- * @param {Object} [options={}] - Configuration options
- * @param {string} [options.separator='-'] - Character to separate words
- * @param {boolean} [options.lowercase=true] - Convert to lowercase
- * @param {boolean} [options.removeAccents=true] - Remove accent characters
- * @param {number} [options.maxLength=50] - Maximum length of slug
- * @param {boolean} [options.allowUnicode=false] - Allow Unicode characters
- * @returns {string} Generated slug
- */
-export function toSlug(text, options = {}) {
-  const {
-    separator = '-',
-    lowercase = true,
-    removeAccents = true,
-    maxLength = 50,
-    allowUnicode = false
-  } = options;
-
-  if (typeof text !== 'string') {
-    throw new Error('Input must be a string');
-  }
-
-  let slug = text.trim();
-
-  if (removeAccents) {
-    // Remove accents and diacritics
-    slug = slug.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  }
-
-  if (lowercase) {
-    slug = slug.toLowerCase();
-  }
-
-  if (!allowUnicode) {
-    // Remove non-ASCII characters
-    slug = slug.replace(/[^\x00-\x7F]/g, '');
-  }
-
-  // Replace spaces and special characters with separator
-  slug = slug
-    .replace(/[^\w\s-]/g, '') // Remove special characters except word chars, spaces, and hyphens
-    .replace(/[\s_-]+/g, separator) // Replace spaces, underscores, and hyphens with separator
-    .replace(new RegExp(`^${separator}+|${separator}+$`, 'g'), ''); // Trim separators from ends
-
-  // Limit length
-  if (maxLength && slug.length > maxLength) {
-    slug = slug.substring(0, maxLength);
-    // Ensure we don't cut in the middle of a word
-    const lastSeparator = slug.lastIndexOf(separator);
-    if (lastSeparator > maxLength * 0.8) {
-      slug = slug.substring(0, lastSeparator);
-    }
-  }
-
-  return slug || 'untitled';
-}
 
 /**
  * Convert string to Base64
@@ -70,7 +11,7 @@ export function toSlug(text, options = {}) {
  * @param {boolean} [options.removePadding=false] - Remove padding characters
  * @returns {string} Base64 encoded string
  */
-export function toBase64(str, options = {}) {
+function toBase64(str, options = {}) {
   const { urlSafe = false, removePadding = false } = options;
 
   if (typeof str !== 'string') {
@@ -108,7 +49,7 @@ export function toBase64(str, options = {}) {
  * @param {boolean} [options.urlSafe=false] - Input is URL-safe encoded
  * @returns {string} Decoded string
  */
-export function fromBase64(base64, options = {}) {
+function fromBase64(base64, options = {}) {
   const { urlSafe = false } = options;
 
   if (typeof base64 !== 'string') {
@@ -147,90 +88,29 @@ export function fromBase64(base64, options = {}) {
 }
 
 /**
- * Generate random Unicode characters
- * @param {Object} [options={}] - Generation options
- * @param {number} [options.length=10] - Number of characters to generate
- * @param {string} [options.range='basic'] - Unicode range ('basic', 'extended', 'emoji', 'custom')
- * @param {number[]} [options.customRange] - Custom Unicode range [start, end]
- * @param {boolean} [options.excludeControl=true] - Exclude control characters
- * @returns {string} Generated Unicode string
- */
-export function generateRandomUnicode(options = {}) {
-  const {
-    length = 10,
-    range = 'basic',
-    customRange,
-    excludeControl = true
-  } = options;
-
-  if (typeof length !== 'number' || length < 0) {
-    throw new Error('Length must be a non-negative number');
-  }
-
-  const ranges = {
-    basic: [0x0020, 0x007E], // Basic Latin
-    extended: [0x0020, 0x024F], // Latin Extended
-    emoji: [0x1F600, 0x1F64F], // Emoticons
-    symbols: [0x2600, 0x26FF], // Miscellaneous Symbols
-    cjk: [0x4E00, 0x9FFF], // CJK Unified Ideographs
-    arabic: [0x0600, 0x06FF], // Arabic
-    cyrillic: [0x0400, 0x04FF] // Cyrillic
-  };
-
-  const [start, end] = customRange || ranges[range] || ranges.basic;
-
-  let result = '';
-  const maxAttempts = length * 10; // Prevent infinite loops
-  let attempts = 0;
-
-  while (result.length < length && attempts < maxAttempts) {
-    const codePoint = Math.floor(Math.random() * (end - start + 1)) + start;
-    
-    // Skip control characters if requested
-    if (excludeControl && (codePoint < 0x20 || (codePoint >= 0x7F && codePoint < 0xA0))) {
-      attempts++;
-      continue;
-    }
-
-    // Skip surrogates
-    if (codePoint >= 0xD800 && codePoint <= 0xDFFF) {
-      attempts++;
-      continue;
-    }
-
-    try {
-      const char = String.fromCodePoint(codePoint);
-      result += char;
-    } catch (err) {
-      // Invalid code point, skip
-      attempts++;
-      continue;
-    }
-
-    attempts++;
-  }
-
-  return result;
-}
-
-/**
- * Generate random string with specific character frequencies
- * @param {Object} options - Generation options
- * @param {number} [options.length=20] - Length of string
- * @param {Object} [options.frequencies] - Character frequency weights
+ * Generate random string with specific character weights/frequencies
+ * UPDATED: Now accepts (length, weights) parameters to match tests
+ * @param {number} length - Length of string to generate
+ * @param {Object} [weights] - Character weight mapping
  * @returns {string} Generated string with weighted characters
  */
-export function generateWeightedString(options = {}) {
-  const {
-    length = 20,
-    frequencies = {
-      'a': 8.12, 'b': 1.49, 'c': 2.78, 'd': 4.25, 'e': 12.02,
-      'f': 2.23, 'g': 2.02, 'h': 6.09, 'i': 6.97, 'j': 0.15,
-      'k': 0.77, 'l': 4.03, 'm': 2.41, 'n': 6.75, 'o': 7.51,
-      'p': 1.93, 'q': 0.10, 'r': 5.99, 's': 6.33, 't': 9.06,
-      'u': 2.76, 'v': 0.98, 'w': 2.36, 'x': 0.15, 'y': 1.97, 'z': 0.07
-    }
-  } = options;
+function generateWeightedString(length, weights) {
+  // Handle zero or negative length
+  if (length <= 0) {
+    return '';
+  }
+
+  // Default character set with simple weights (matches test expectations)
+  const defaultWeights = {
+    'a': 8, 'b': 2, 'c': 3, 'd': 4, 'e': 12, 'f': 2, 'g': 2, 'h': 6,
+    'i': 7, 'j': 1, 'k': 1, 'l': 4, 'm': 2, 'n': 7, 'o': 8, 'p': 2,
+    'q': 1, 'r': 6, 's': 6, 't': 9, 'u': 3, 'v': 1, 'w': 2, 'x': 1,
+    'y': 2, 'z': 1,
+    // Add numbers to default set (as expected by tests)
+    '0': 1, '1': 1, '2': 1, '3': 1, '4': 1, '5': 1, '6': 1, '7': 1, '8': 1, '9': 1
+  };
+
+  const frequencies = weights || defaultWeights;
 
   // Create weighted array
   const weightedChars = [];
@@ -256,24 +136,18 @@ export function generateWeightedString(options = {}) {
 
 /**
  * Generate string following a specific pattern
+ * UPDATED: Now accepts (pattern, generators) parameters to match tests
  * @param {string} pattern - Pattern string with placeholders
- * @param {Object} [options={}] - Pattern options
+ * @param {Object} [generators={}] - Custom generator functions for placeholders
  * @returns {string} Generated string following the pattern
- * 
- * Pattern syntax:
- * - # = random digit (0-9)
- * - @ = random letter (a-z, A-Z)
- * - ? = random alphanumeric
- * - * = random character from custom set
  */
-export function generatePatternString(pattern, options = {}) {
-  const { customChars = '!@#$%^&*()' } = options;
-
+function generatePatternString(pattern, generators = {}) {
   if (typeof pattern !== 'string') {
     throw new Error('Pattern must be a string');
   }
 
-  const generators = {
+  // Default built-in generators (still available)
+  const builtInGenerators = {
     '#': () => Math.floor(Math.random() * 10).toString(),
     '@': () => {
       const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
@@ -283,13 +157,95 @@ export function generatePatternString(pattern, options = {}) {
       const alphanum = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
       return alphanum[Math.floor(Math.random() * alphanum.length)];
     },
-    '*': () => customChars[Math.floor(Math.random() * customChars.length)]
+    '*': () => {
+      const customChars = '!@#$%^&*()';
+      return customChars[Math.floor(Math.random() * customChars.length)];
+    }
   };
 
-  return pattern.replace(/[#@?*]/g, (match) => {
-    const generator = generators[match];
-    return generator ? generator() : match;
+  // Merge custom generators with built-in ones (custom takes precedence)
+  const allGenerators = { ...builtInGenerators, ...generators };
+
+  // Replace any character that has a generator
+  return pattern.replace(/./g, (char) => {
+    const generator = allGenerators[char];
+    return generator ? generator() : char;
   });
+}
+
+/**
+ * Generate Lorem Ipsum text with specific word count
+ * @param {number} wordCount - Number of words to generate
+ * @param {Object} [options={}] - Generation options
+ * @param {boolean} [options.startWithLorem=true] - Start with "Lorem ipsum"
+ * @param {boolean} [options.addPunctuation=true] - Add sentence punctuation
+ * @returns {string} Generated Lorem Ipsum text
+ */
+function generateLoremIpsum(wordCount, options = {}) {
+  const { startWithLorem = true, addPunctuation = true } = options;
+
+  // Handle edge cases
+  if (wordCount <= 0) {
+    return '';
+  }
+
+  const words = [
+    'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
+    'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
+    'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
+    'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo',
+    'consequat', 'duis', 'aute', 'irure', 'in', 'reprehenderit', 'voluptate', 'velit',
+    'esse', 'cillum', 'fugiat', 'nulla', 'pariatur', 'excepteur', 'sint', 'occaecat',
+    'cupidatat', 'non', 'proident', 'sunt', 'culpa', 'qui', 'officia', 'deserunt',
+    'mollit', 'anim', 'id', 'est', 'laborum'
+  ];
+
+  const result = [];
+  let startIndex = 0;
+
+  if (startWithLorem && wordCount >= 2) {
+    result.push('Lorem', 'ipsum');
+    startIndex = 2;
+  } else if (startWithLorem && wordCount === 1) {
+    result.push('Lorem');
+    startIndex = 1;
+  }
+
+  for (let i = startIndex; i < wordCount; i++) {
+    result.push(words[Math.floor(Math.random() * words.length)]);
+  }
+
+  let text = result.join(' ');
+
+  if (addPunctuation && text) {
+    // Capitalize first letter
+    text = text.charAt(0).toUpperCase() + text.slice(1);
+    
+    // Add periods at reasonable intervals
+    const sentences = Math.ceil(wordCount / 12);
+    if (sentences > 1) {
+      const wordsArray = text.split(' ');
+      const sentenceLength = Math.floor(wordsArray.length / sentences);
+      
+      for (let i = sentenceLength - 1; i < wordsArray.length - 1; i += sentenceLength) {
+        if (wordsArray[i]) {
+          wordsArray[i] += '.';
+          if (wordsArray[i + 1]) {
+            wordsArray[i + 1] = wordsArray[i + 1].charAt(0).toUpperCase() + wordsArray[i + 1].slice(1);
+          }
+        }
+      }
+      
+      text = wordsArray.join(' ');
+    }
+    
+    // Ensure text ends with period
+    if (!text.endsWith('.')) {
+      text += '.';
+    }
+  }
+
+  return text;
 }
 
 /**
@@ -345,65 +301,10 @@ function manualBase64Decode(base64) {
   return result;
 }
 
-/**
- * Generate Lorem Ipsum text with specific word count
- * @param {number} wordCount - Number of words to generate
- * @param {Object} [options={}] - Generation options
- * @param {boolean} [options.startWithLorem=true] - Start with "Lorem ipsum"
- * @param {boolean} [options.addPunctuation=true] - Add sentence punctuation
- * @returns {string} Generated Lorem Ipsum text
- */
-export function generateLoremIpsum(wordCount, options = {}) {
-  const { startWithLorem = true, addPunctuation = true } = options;
-
-  const words = [
-    'lorem', 'ipsum', 'dolor', 'sit', 'amet', 'consectetur', 'adipiscing', 'elit',
-    'sed', 'do', 'eiusmod', 'tempor', 'incididunt', 'ut', 'labore', 'et', 'dolore',
-    'magna', 'aliqua', 'enim', 'ad', 'minim', 'veniam', 'quis', 'nostrud',
-    'exercitation', 'ullamco', 'laboris', 'nisi', 'aliquip', 'ex', 'ea', 'commodo'
-  ];
-
-  const result = [];
-  let startIndex = 0;
-
-  if (startWithLorem && wordCount >= 2) {
-    result.push('Lorem', 'ipsum');
-    startIndex = 2;
-  }
-
-  for (let i = startIndex; i < wordCount; i++) {
-    result.push(words[Math.floor(Math.random() * words.length)]);
-  }
-
-  let text = result.join(' ');
-
-  if (addPunctuation && text) {
-    // Capitalize first letter
-    text = text.charAt(0).toUpperCase() + text.slice(1);
-    
-    // Add periods at reasonable intervals
-    const sentences = Math.ceil(wordCount / 12);
-    if (sentences > 1) {
-      const wordsArray = text.split(' ');
-      const sentenceLength = Math.floor(wordsArray.length / sentences);
-      
-      for (let i = sentenceLength - 1; i < wordsArray.length - 1; i += sentenceLength) {
-        if (wordsArray[i]) {
-          wordsArray[i] += '.';
-          if (wordsArray[i + 1]) {
-            wordsArray[i + 1] = wordsArray[i + 1].charAt(0).toUpperCase() + wordsArray[i + 1].slice(1);
-          }
-        }
-      }
-      
-      text = wordsArray.join(' ');
-    }
-    
-    // Ensure text ends with period
-    if (!text.endsWith('.')) {
-      text += '.';
-    }
-  }
-
-  return text;
-}
+export {
+  toBase64,
+  fromBase64,
+  generateWeightedString,
+  generatePatternString,
+  generateLoremIpsum
+};
