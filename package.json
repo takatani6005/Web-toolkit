@@ -1,98 +1,21 @@
 {
-  "name": "html-entity-codec",
-  "version": "2.0.0",
-  "description": "Fast and comprehensive HTML entity encoding/decoding library with advanced features",
-  "main": "src/index.js",
-  "types": "types/index.d.ts",
-  "files": [
-    "src/",
-    "data/",
-    "types/",
-    "README.md",
-    "license"
-  ],
-  "scripts": {
-    "build": "node scripts/build-encode-map.js",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest",
-    "test:decode": "node tests/decode.test.js",
-    "benchmark": "node scripts/benchmark.js",
-    "validate": "node scripts/validate-data.js",
-    "prepack": "npm run build && npm run test",
-    "dev": "node scripts/dev-server.js",
-    "lint": "eslint src/ tests/ scripts/",
-    "format": "prettier --write src/ tests/ scripts/"
-  },
-  "keywords": [
-    "html",
-    "entities",
-    "encode",
-    "decode",
-    "escape",
-    "unescape",
-    "html5",
-    "xml",
-    "unicode",
-    "entity",
-    "character",
-    "reference"
-  ],
-  "author": {
-    "name": "Your Name",
-    "email": "your.email@example.com"
-  },
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/html-entity-codec.git"
-  },
-  "bugs": {
-    "url": "https://github.com/yourusername/html-entity-codec/issues"
-  },
-  "homepage": "https://github.com/yourusername/html-entity-codec#readme",
-  "engines": {
-    "node": ">=12.0.0"
-  },
+  "name": "web-toolkit",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": ["packages/*"],
   "devDependencies": {
-    "eslint": "^8.57.0",
     "jest": "^29.7.0",
-    "prettier": "^3.2.5",
-    "typescript": "^5.3.3"
-  },
-  "optionalDependencies": {
-    "benchmark": "^2.1.4"
-  },
-  "browser": {
-    "./data/decode-map.json": "./data/entities_data_map.js",
-    "./data/encode-map-full.json": "./data/entities_data_map.js",
-    "./data/encode-map-lite.json": "./data/entities_data_map.js"
-  },
-  "exports": {
-    ".": {
-      "import": "./src/index.js",
-      "require": "./src/index.js",
-      "types": "./types/index.d.ts"
-    },
-    "./lite": {
-      "import": "./src/lite.js",
-      "require": "./src/lite.js"
-    },
-    "./data/*": "./data/*"
-  },
-  "config": {
-    "entitySources": [
-      "https://html.spec.whatwg.org/entities.json",
-      "https://www.w3.org/TR/xml-entity-names/",
-      "https://www.w3.org/TR/MathML3/entityNames.html"
-    ]
-  },
-  "funding": {
-    "type": "individual",
-    "url": "https://github.com/sponsors/yourusername"
+    "ts-jest": "^29.4.2",
+    "babel-jest": "^29.7.0",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-env": "^7.25.0",
+    "typescript": "^5.6.0"
   },
   "type": "module",
-  "sideEffects": false,
-  "dependencies": {
-    "@jest/globals": "^29.7.0"
-  },
-  "private": true
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "jest -c jest.config.mjs",
+    "lint": "eslint .",
+    "format": "prettier --write ."
+  }
 }

@@ -1,0 +1,83 @@
+{
+  "name": "utility-patterns-lib",
+  "version": "1.0.0",
+  "description": "A comprehensive utility library for generating data, patterns, and handling various formats including colors, dates, IDs, and more",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:verbose": "jest --verbose",
+    "test:generate": "jest tests/generate/",
+    "test:patterns": "jest tests/patterns/",
+    "test:color": "jest tests/patterns/color/",
+    "test:ci": "jest --ci --coverage --watchAll=false"
+  },
+  "keywords": [
+    "utility",
+    "patterns",
+    "generators",
+    "colors",
+    "security",
+    "data-structures",
+    "uuid",
+    "hash",
+    "slug",
+    "unicode"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-node": "^29.7.0"
+  },
+  "dependencies": {
+    "crypto": "^1.0.1"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.m?js$": "babel-jest"
+    },
+    "testMatch": [
+      "**/tests/**/*.test.js",
+      "**/tests/**/*.test.mjs"
+    ],
+    "collectCoverageFrom": [
+      "**/*.js",
+      "!**/node_modules/**",
+      "!**/tests/**",
+      "!jest.config.js",
+      "!coverage/**"
+    ],
+    "coverageDirectory": "coverage",
+    "coverageReporters": [
+      "text",
+      "lcov",
+      "html"
+    ],
+    "verbose": true,
+    "testTimeout": 10000,
+    "moduleFileExtensions": [
+      "js",
+      "mjs",
+      "json"
+    ],
+
+    "globals": {
+      "NODE_ENV": "test"
+    }
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yourusername/utility-patterns-lib.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/utility-patterns-lib/issues"
+  },
+  "homepage": "https://github.com/yourusername/utility-patterns-lib#readme"
+}
