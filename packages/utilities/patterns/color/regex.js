@@ -2,7 +2,6 @@
  * Color Regex Pattern Generators
  * Creates regex patterns for matching various color formats
  */
-
 /**
  * Generate CMYK regex pattern for pattern matching
  * @param {Object} options - Configuration options
@@ -10,19 +9,18 @@
  * @param {boolean} [options.capture=false] - Use capturing groups
  * @returns {RegExp} CMYK pattern regex
  */
- function generateCmykColorPattern(options = {}) {
+function generateCmykColorPattern(options = {}) {
   const { anchors = true, capture = false } = options;
 
   const num = '(?:100(?:\\.0+)?|\\d{1,2}(?:\\.\\d+)?)';
-  const numWithPercent = num + '%?';
+  const numWithPercent = `${num}%?`;
   const sep = '(?:\\s*,\\s*|\\s+)';
-  const group = capture ? '(' + numWithPercent + ')' : '(?:' + numWithPercent + ')';
+  const group = capture ? `(${numWithPercent})` : `(?:${numWithPercent})`;
 
-  const pattern = (anchors ? '^\\s*' : '') +
-    '[cC][mM][yY][kK]\\(\\s*' +
-    group + sep + group + sep + group + sep + group +
-    '\\s*\\)' +
-    (anchors ? '\\s*$' : '');
+  const pattern = `${anchors ? '^\\s*' : ''}` +
+    `[cC][mM][yY][kK]\\(\\s*` +
+    `${group}${sep}${group}${sep}${group}${sep}${group}` +
+    `\\s*\\)${anchors ? '\\s*$' : ''}`;
 
   return new RegExp(pattern, 'i');
 }
@@ -36,7 +34,7 @@
  * @param {boolean} [options.strictSyntax=false] - Use strict comma separation
  * @returns {RegExp} RGB pattern regex
  */
- function createRgbPattern(options = {}) {
+function createRgbPattern(options = {}) {
   const { 
     allowAlpha = false, 
     allowPercentage = false, 
@@ -53,7 +51,9 @@
   const separator = strictSyntax ? ',' : '[,\\s]';
   
   const basePattern = `rgb\\(${space}${numValue}${space}${separator}${space}${numValue}${space}${separator}${space}${numValue}${space}\\)`;
-  const alphaPattern = allowAlpha ? `|rgba\\(${space}${numValue}${space}${separator}${space}${numValue}${space}${separator}${space}${numValue}${space}${separator}${space}${alphaValue}${space}\\)` : '';
+  const alphaPattern = allowAlpha 
+    ? `|rgba\\(${space}${numValue}${space}${separator}${space}${numValue}${space}${separator}${space}${numValue}${space}${separator}${space}${alphaValue}${space}\\)` 
+    : '';
   
   return new RegExp(`^(?:${basePattern}${alphaPattern})$`, 'i');
 }
@@ -63,7 +63,7 @@
  * @param {Object} options - Configuration options
  * @returns {RegExp} RGBA pattern regex
  */
- function createRgbaPattern(options = {}) {
+function createRgbaPattern(options = {}) {
   return createRgbPattern({ ...options, allowAlpha: true });
 }
 
@@ -76,7 +76,7 @@
  * @param {boolean} [options.strictSyntax=false] - Use strict comma separation
  * @returns {RegExp} HSL pattern regex
  */
- function createHslPattern(options = {}) {
+function createHslPattern(options = {}) {
   const { 
     allowAlpha = false, 
     allowSpaces = true,
@@ -94,7 +94,9 @@
   const separator = strictSyntax ? ',' : '[,\\s]';
   
   const basePattern = `hsl\\(${space}${hueValue}${space}${separator}${space}${percentValue}${space}${separator}${space}${percentValue}${space}\\)`;
-  const alphaPattern = allowAlpha ? `|hsla\\(${space}${hueValue}${space}${separator}${space}${percentValue}${space}${separator}${space}${percentValue}${space}${separator}${space}${alphaValue}${space}\\)` : '';
+  const alphaPattern = allowAlpha 
+    ? `|hsla\\(${space}${hueValue}${space}${separator}${space}${percentValue}${space}${separator}${space}${percentValue}${space}${separator}${space}${alphaValue}${space}\\)` 
+    : '';
   
   return new RegExp(`^(?:${basePattern}${alphaPattern})$`, 'i');
 }
@@ -104,7 +106,7 @@
  * @param {Object} options - Configuration options
  * @returns {RegExp} HSLA pattern regex
  */
- function createHslaPattern(options = {}) {
+function createHslaPattern(options = {}) {
   return createHslPattern({ ...options, allowAlpha: true });
 }
 
@@ -117,7 +119,7 @@
  * @param {boolean} [options.strictSyntax=false] - Use strict comma separation
  * @returns {RegExp} HWB pattern regex
  */
- function createHwbPattern(options = {}) {
+function createHwbPattern(options = {}) {
   const { 
     allowAlpha = false, 
     allowSpaces = true,
@@ -147,11 +149,11 @@
  * @param {boolean} [options.requireHash=true] - Require # prefix
  * @returns {RegExp} Hex pattern regex
  */
- function createHexPattern(options = {}) {
+function createHexPattern(options = {}) {
   const { allowShort = true, allowAlpha = true, requireHash = true } = options;
   
   const prefix = requireHash ? '#' : '#?';
-  let patterns = ['[0-9A-Fa-f]{6}']; // 6-digit hex
+  const patterns = ['[0-9A-Fa-f]{6}']; // 6-digit hex
   
   if (allowShort) {
     patterns.push('[0-9A-Fa-f]{3}'); // 3-digit hex
@@ -168,41 +170,44 @@
 }
 
 /**
+ * Default CSS named colors
+ */
+const DEFAULT_NAMED_COLORS = [
+  'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque',
+  'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood',
+  'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk',
+  'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray',
+  'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta', 'darkolivegreen',
+  'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
+  'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise',
+  'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue',
+  'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro',
+  'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'grey',
+  'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender',
+  'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral',
+  'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen', 'lightgrey',
+  'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray',
+  'lightslategrey', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen',
+  'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid',
+  'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen',
+  'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream',
+  'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive',
+  'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen',
+  'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink',
+  'plum', 'powderblue', 'purple', 'red', 'rosybrown', 'royalblue',
+  'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna',
+  'silver', 'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow',
+  'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise',
+  'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'
+];
+
+/**
  * Create a named color regex pattern
  * @param {string[]} [colorNames] - Array of color names to match
  * @returns {RegExp} Named color pattern regex
  */
- function createNamedColorPattern(colorNames = null) {
-  const defaultColors = [
-    'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque',
-    'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood',
-    'cadetblue', 'chartreuse', 'chocolate', 'coral', 'cornflowerblue', 'cornsilk',
-    'crimson', 'cyan', 'darkblue', 'darkcyan', 'darkgoldenrod', 'darkgray',
-    'darkgreen', 'darkgrey', 'darkkhaki', 'darkmagenta', 'darkolivegreen',
-    'darkorange', 'darkorchid', 'darkred', 'darksalmon', 'darkseagreen',
-    'darkslateblue', 'darkslategray', 'darkslategrey', 'darkturquoise',
-    'darkviolet', 'deeppink', 'deepskyblue', 'dimgray', 'dimgrey', 'dodgerblue',
-    'firebrick', 'floralwhite', 'forestgreen', 'fuchsia', 'gainsboro',
-    'ghostwhite', 'gold', 'goldenrod', 'gray', 'green', 'greenyellow', 'grey',
-    'honeydew', 'hotpink', 'indianred', 'indigo', 'ivory', 'khaki', 'lavender',
-    'lavenderblush', 'lawngreen', 'lemonchiffon', 'lightblue', 'lightcoral',
-    'lightcyan', 'lightgoldenrodyellow', 'lightgray', 'lightgreen', 'lightgrey',
-    'lightpink', 'lightsalmon', 'lightseagreen', 'lightskyblue', 'lightslategray',
-    'lightslategrey', 'lightsteelblue', 'lightyellow', 'lime', 'limegreen',
-    'linen', 'magenta', 'maroon', 'mediumaquamarine', 'mediumblue', 'mediumorchid',
-    'mediumpurple', 'mediumseagreen', 'mediumslateblue', 'mediumspringgreen',
-    'mediumturquoise', 'mediumvioletred', 'midnightblue', 'mintcream',
-    'mistyrose', 'moccasin', 'navajowhite', 'navy', 'oldlace', 'olive',
-    'olivedrab', 'orange', 'orangered', 'orchid', 'palegoldenrod', 'palegreen',
-    'paleturquoise', 'palevioletred', 'papayawhip', 'peachpuff', 'peru', 'pink',
-    'plum', 'powderblue', 'purple', 'red', 'rosybrown', 'royalblue',
-    'saddlebrown', 'salmon', 'sandybrown', 'seagreen', 'seashell', 'sienna',
-    'silver', 'skyblue', 'slateblue', 'slategray', 'slategrey', 'snow',
-    'springgreen', 'steelblue', 'tan', 'teal', 'thistle', 'tomato', 'turquoise',
-    'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'
-  ];
-  
-  const colors = colorNames || defaultColors;
+function createNamedColorPattern(colorNames = null) {
+  const colors = colorNames || DEFAULT_NAMED_COLORS;
   return new RegExp(`^(?:${colors.join('|')})$`, 'i');
 }
 
@@ -211,17 +216,19 @@
  * @param {Object} options - Configuration options
  * @returns {RegExp} Universal color pattern regex
  */
- function createUniversalColorPattern(options = {}) {
-  const hexPattern = createHexPattern(options).source.slice(1, -1); // Remove ^ and $
-  const namedPattern = createNamedColorPattern().source.slice(1, -1);
-  const rgbPattern = createRgbPattern({ allowAlpha: true }).source.slice(1, -1);
-  const hslPattern = createHslPattern({ allowAlpha: true }).source.slice(1, -1);
-  const hwbPattern = createHwbPattern({ allowAlpha: true }).source.slice(1, -1);
+function createUniversalColorPattern(options = {}) {
+  const patterns = [
+    createHexPattern(options),
+    createNamedColorPattern(),
+    createRgbPattern({ allowAlpha: true }),
+    createHslPattern({ allowAlpha: true }),
+    createHwbPattern({ allowAlpha: true })
+  ];
   
-  const allPatterns = [hexPattern, namedPattern, rgbPattern, hslPattern, hwbPattern];
-  
-  return new RegExp(`^(?:${allPatterns.join('|')})$`, 'i');
+  const sources = patterns.map(pattern => pattern.source.slice(1, -1)); // Remove ^ and $
+  return new RegExp(`^(?:${sources.join('|')})$`, 'i');
 }
+
 export {
   generateCmykColorPattern,
   createRgbPattern,
@@ -231,5 +238,6 @@ export {
   createHwbPattern,
   createHexPattern,
   createNamedColorPattern,
-  createUniversalColorPattern
+  createUniversalColorPattern,
+  DEFAULT_NAMED_COLORS
 };

@@ -1,142 +1,45 @@
 /**
  * Basic Color Pattern Generators
- * Generates common color formats: HEX, RGB, HSL, HWB, Named colors
+ * Generates regex patterns to match common color formats: HEX, RGB, HSL, HWB, Named colors
  */
 
-// ===== HEX COLOR GENERATORS =====
-
+// ===== HEX COLOR PATTERN GENERATORS =====
 /**
- * Generate a random hex color value
- * @param {boolean} short - Whether to generate short (3-digit) hex
- * @returns {string} Hex color string like "#ff6b35" or "#f63"
+ * Generate a regex pattern for hex colors
+ * @param {Object} options
+ * @param {'3'|'4'|'6'|'8'|'all'|'random'} [options.type='all'] - Type of hex color
+ * @returns {RegExp} Pattern that matches the selected hex color format
  */
- function generateHexColorPattern(short = false) {
-  const getRandomHex = () => Math.floor(Math.random() * 16).toString(16);
-  const length = short ? 3 : 6;
-  return '#' + Array.from({ length }, getRandomHex).join('');
+function generateHexColorPattern({ type = 'all' } = {}) {
+  const map = {
+    '3': '#[0-9a-fA-F]{3}',
+    '4': '#[0-9a-fA-F]{4}',
+    '6': '#[0-9a-fA-F]{6}',
+    '8': '#[0-9a-fA-F]{8}',
+    'all': '#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})',
+    'random':'/^#[0-9a-fA-F]{3,8}$/'
+  };
+  return new RegExp(`^${map[type] || map['all']}$`);
 }
 
-/**
- * Generate a 3-character hex color (#RGB)
- * @returns {string} 3-char hex color like "#f63"
- */
- function generateHex3ColorPattern() {
-  const getRandomHex = () => Math.floor(Math.random() * 16).toString(16);
-  return '#' + Array.from({ length: 3 }, getRandomHex).join('');
+function generateCssColorPattern({ type = 'rgb' } = {}) {
+  const map = {
+    rgb:  /^rgb\(\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*,\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*,\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*\)$/,
+    rgba: /^rgba\(\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*,\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*,\s*(25[0-5]|2[0-4]\d|1\d\d|[1-9]?\d)\s*,\s*(0|0?\.\d+|1(\.0+)?)\s*\)$/,
+    hsl:  /^hsl\(\s*(360|3[0-5]\d|[12]\d\d|[1-9]?\d)\s*,\s*(100|[1-9]?\d)%\s*,\s*(100|[1-9]?\d)%\s*\)$/,
+    hsla: /^hsla\(\s*(360|3[0-5]\d|[12]\d\d|[1-9]?\d)\s*,\s*(100|[1-9]?\d)%\s*,\s*(100|[1-9]?\d)%\s*,\s*(0|0?\.\d+|1(\.0+)?)\s*\)$/,
+    hwb:  /^hwb\(\s*(360|3[0-5]\d|[12]\d\d|[1-9]?\d)\s+(100|[1-9]?\d)%\s+(100|[1-9]?\d)%\s*\)$/
+  };
+  return map[type] || map['rgb'];
 }
 
-/**
- * Generate a 4-character hex color with alpha (#RGBA)
- * @returns {string} 4-char hex color like "#f63a"
- */
- function generateHex4ColorPattern() {
-  const getRandomHex = () => Math.floor(Math.random() * 16).toString(16);
-  return '#' + Array.from({ length: 4 }, getRandomHex).join('');
-}
+// ===== NAMED COLOR PATTERN GENERATORS =====
 
 /**
- * Generate a 6-character hex color (#RRGGBB)
- * @returns {string} 6-char hex color like "#ff6633"
+ * Generate a regex pattern for CSS named colors
+ * @returns {RegExp} Pattern that matches named colors like "red" or "cornflowerblue"
  */
- function generateHex6ColorPattern() {
-  const getRandomHex = () => Math.floor(Math.random() * 16).toString(16);
-  return '#' + Array.from({ length: 6 }, getRandomHex).join('');
-}
-
-/**
- * Generate an 8-character hex color with alpha (#RRGGBBAA)
- * @returns {string} 8-char hex color like "#ff6633aa"
- */
- function generateHex8ColorPattern() {
-  const getRandomHex = () => Math.floor(Math.random() * 16).toString(16);
-  return '#' + Array.from({ length: 8 }, getRandomHex).join('');
-}
-
-/**
- * Generate any hex variant randomly
- * @returns {string} Random hex color in any format
- */
- function generateRandomHexPattern() {
-  const generators = [
-    generateHex3ColorPattern,
-    generateHex4ColorPattern,
-    generateHex6ColorPattern,
-    generateHex8ColorPattern
-  ];
-  const selectedGenerator = generators[Math.floor(Math.random() * generators.length)];
-  return selectedGenerator();
-}
-
-// ===== RGB/RGBA COLOR GENERATORS =====
-
-/**
- * Generate a random RGB color string
- * @returns {string} RGB color string like "rgb(255, 128, 64)"
- */
- function generateRgbColorPattern() {
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-/**
- * Generate a random RGBA color string
- * @returns {string} RGBA color string like "rgba(255, 128, 64, 0.5)"
- */
- function generateRgbaColorPattern() {
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  const a = Math.round(Math.random() * 100) / 100;
-  return `rgba(${r}, ${g}, ${b}, ${a})`;
-}
-
-// ===== HSL/HSLA COLOR GENERATORS =====
-
-/**
- * Generate a random HSL color string
- * @returns {string} HSL color string like "hsl(240, 75%, 50%)"
- */
- function generateHslColorPattern() {
-  const h = Math.floor(Math.random() * 360);
-  const s = Math.floor(Math.random() * 101);
-  const l = Math.floor(Math.random() * 101);
-  return `hsl(${h}, ${s}%, ${l}%)`;
-}
-
-/**
- * Generate a random HSLA color string
- * @returns {string} HSLA color string like "hsla(240, 75%, 50%, 0.8)"
- */
- function generateHslaColorPattern() {
-  const h = Math.floor(Math.random() * 360);
-  const s = Math.floor(Math.random() * 101);
-  const l = Math.floor(Math.random() * 101);
-  const a = Math.round(Math.random() * 100) / 100;
-  return `hsla(${h}, ${s}%, ${l}%, ${a})`;
-}
-
-// ===== HWB COLOR GENERATORS =====
-
-/**
- * Generate a random HWB color string
- * @returns {string} HWB color string like "hwb(240 25% 30%)"
- */
- function generateHwbColorPattern() {
-  const h = Math.floor(Math.random() * 360);
-  const w = Math.floor(Math.random() * 101);
-  const b = Math.floor(Math.random() * 101);
-  return `hwb(${h} ${w}% ${b}%)`;
-}
-
-// ===== NAMED COLOR GENERATORS =====
-
-/**
- * Generate a random CSS named color
- * @returns {string} Named color like "red" or "cornflowerblue"
- */
- function generateNamedColorPattern() {
+function generateNamedColorPattern() {
   const basicColors = [
     'aliceblue', 'antiquewhite', 'aqua', 'aquamarine', 'azure', 'beige', 'bisque',
     'black', 'blanchedalmond', 'blue', 'blueviolet', 'brown', 'burlywood',
@@ -166,39 +69,134 @@
     'violet', 'wheat', 'white', 'whitesmoke', 'yellow', 'yellowgreen'
   ];
   
-  return basicColors[Math.floor(Math.random() * basicColors.length)];
+  // Create a regex pattern that matches any of the named colors (case sensitive, lowercase only)
+  return new RegExp(`^(${basicColors.join('|')})$`);
 }
 
-// ===== UNIVERSAL COLOR GENERATORS =====
+// ===== UNIVERSAL COLOR PATTERN GENERATORS =====
+/**
+ * Generate a highly optimized regex for all main CSS color functions.
+ * Covers: rgb, rgba, hsl, hsla, hwb, lab, lch, color()
+ * @returns {RegExp}
+ */
+function generateColorFunctionPattern() {
+  // Số: optional sign, integer hoặc decimal, có thể kèm %
+  const num = '[+-]?(?:\\d*\\.\\d+|\\d+)%?';
+  // Ngăn cách: comma kèm khoảng trắng hoặc chỉ khoảng trắng
+  const sep = '(?:\\s*,\\s*|\\s+)';
+
+  // Hàm có 3 tham số (rgb, hsl, hwb, lab, lch)
+  const triple = name => `${name}\\(\\s*${num}(?:${sep}${num}){2}\\s*\\)`;
+  // Hàm có 4 tham số (rgba, hsla)
+  const quadruple = name => `${name}\\(\\s*${num}(?:${sep}${num}){3}\\s*\\)`;
+
+  // color(space numbers…)
+  const color = `color\\(\\s*[a-z][\\w-]*\\s+${num}(?:${sep}${num})*\\s*\\)`;
+
+  const combined =
+    `^(?:${[
+      triple('rgb'),
+      quadruple('rgba'),
+      triple('hsl'),
+      quadruple('hsla'),
+      triple('hwb'),
+      triple('lab'),
+      triple('lch'),
+      triple('oklab'),    
+      triple('oklch'),    
+      color
+    ].join('|')})$`;
+
+  return new RegExp(combined, 'i');
+}
 
 /**
- * Generate a random CSS color function value
- * @returns {string} Color function like "rgb(255, 128, 0)" or "hsl(240, 50%, 75%)"
+ * Add-ons for Basic Color Pattern Generators
+ * Additional validation-oriented test functions and patterns
  */
- function generateColorFunctionPattern() {
-  const generators = [
-    generateRgbColorPattern,
-    generateRgbaColorPattern,
-    generateHslColorPattern,
-    generateHslaColorPattern
-  ];
+
+// ===== HWB COLOR PATTERN GENERATOR =====
+/**
+ * Generate a regex pattern for HWB (Hue, Whiteness, Blackness) colors
+ * @param {Object} options
+ * @param {boolean} [options.allowAlpha=false] - Include alpha channel support
+ * @returns {RegExp} Pattern that matches HWB color format
+ */
+function generateHwbColorPattern({ allowAlpha = false } = {}) {
+  const hue = '(?:360|3[0-5]\\d|[12]\\d\\d|[1-9]?\\d)';
+  const percentage = '(?:100|[1-9]?\\d)%';
+  const alpha = '(?:0|0?\\.\\d+|1(?:\\.0+)?)';
   
-  const selectedGenerator = generators[Math.floor(Math.random() * generators.length)];
-  return selectedGenerator();
+  if (allowAlpha) {
+    return new RegExp(
+      `^hwb\\(\\s*${hue}\\s+${percentage}\\s+${percentage}\\s*(?:\\s*\\/\\s*${alpha})?\\s*\\)$`,
+      'i'
+    );
+  }
+  
+  return new RegExp(
+    `^hwb\\(\\s*${hue}\\s+${percentage}\\s+${percentage}\\s*\\)$`,
+    'i'
+  );
 }
+
+// ===== HEX ALPHA COLOR PATTERN GENERATOR =====
+/**
+ * Generate a regex pattern for hex colors with alpha channel support
+ * @param {Object} options
+ * @param {boolean} [options.strictAlpha=true] - Only match colors with alpha
+ * @returns {RegExp} Pattern that matches hex colors with alpha (#RRGGBBAA, #RGBA)
+ */
+function generateHexAlphaColorPattern({ strictAlpha = true } = {}) {
+  if (strictAlpha) {
+    // Only match hex colors that have alpha channel
+    return new RegExp('^#(?:[0-9a-fA-F]{4}|[0-9a-fA-F]{8})$');
+  }
+  
+  // Match hex colors with optional alpha channel
+  return new RegExp('^#(?:[0-9a-fA-F]{3,4}|[0-9a-fA-F]{6,8})$');
+}
+
+// ===== CSS GRADIENT PATTERN GENERATOR =====
+/**
+ * Generate a regex pattern for CSS gradients
+ * @param {Object} options
+ * @param {'linear'|'radial'|'conic'|'all'} [options.type='all'] - Type of gradient
+ * @returns {RegExp} Pattern that matches CSS gradient functions
+ */
+function generateCssGradientPattern({ type = 'all' } = {}) {
+  // Color stop pattern (color with optional position)
+  const colorStop = '(?:#[0-9a-fA-F]{3,8}|rgba?\\([^)]+\\)|hsla?\\([^)]+\\)|[a-z]+)(?:\\s+[\\d.]+%?)?';
+  const colorStops = `${colorStop}(?:\\s*,\\s*${colorStop})*`;
+  
+  const patterns = {
+    linear: `linear-gradient\\(\\s*(?:(?:to\\s+(?:top|bottom|left|right)(?:\\s+(?:left|right|top|bottom))?|[\\d.]+deg)\\s*,\\s*)?${colorStops}\\s*\\)`,
+    radial: `radial-gradient\\(\\s*(?:(?:circle|ellipse)(?:\\s+(?:closest-side|closest-corner|farthest-side|farthest-corner))?(?:\\s+at\\s+[\\d.]+%?\\s+[\\d.]+%?)?\\s*,\\s*)?${colorStops}\\s*\\)`,
+    conic: `conic-gradient\\(\\s*(?:from\\s+[\\d.]+deg(?:\\s+at\\s+[\\d.]+%?\\s+[\\d.]+%?)?\\s*,\\s*)?${colorStops}\\s*\\)`,
+  };
+  
+  if (type === 'all') {
+    const allPatterns = Object.values(patterns).join('|');
+    return new RegExp(`^(?:${allPatterns})$`, 'i');
+  }
+  
+  return new RegExp(`^${patterns[type]}$`, 'i');
+}
+
+
+// ===== EXPORTS =====
+
+ 
 
 export {
   generateHexColorPattern,
-  generateHex3ColorPattern,
-  generateHex4ColorPattern,
-  generateHex6ColorPattern,
-  generateHex8ColorPattern,
-  generateRandomHexPattern,
-  generateRgbColorPattern,
-  generateRgbaColorPattern,
-  generateHslColorPattern,
-  generateHslaColorPattern,
-  generateHwbColorPattern,
+  generateCssColorPattern,
   generateNamedColorPattern,
-  generateColorFunctionPattern
+  generateColorFunctionPattern,
+
+  generateHwbColorPattern,
+  generateHexAlphaColorPattern,
+  generateCssGradientPattern,
+  
+
 };
